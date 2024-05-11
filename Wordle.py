@@ -1,8 +1,11 @@
 import random
 import numpy as np
+import gym
+from gym import spaces
 
-class WordleEnv:
+class WordleEnv(gym.Env):
     def __init__(self, word_length=5, max_attempts=6, subset_size=None):
+        metadata = {'render.modes': ['human']}
         self.word_length = word_length
         self.max_attempts = max_attempts
         self.target_word = ''
@@ -20,8 +23,10 @@ class WordleEnv:
 
         # State space has 78 dimensions (3 for each letter, gray, yellow, and green states)
         self.state_size = 78
+        self.observation_space = spaces.Discrete(self.state_size)
         # Possible actions are the number of words in the dataset
         self.action_size = len(self.words)
+        self.action_space = spaces.Discrete(self.action_size)
         # Current state starts as all zeros one hot encoded matrix, then it will be built after each move
         self.current_state = np.zeros(self.state_size, dtype=np.float32)
         
