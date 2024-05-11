@@ -1,8 +1,10 @@
 import gym
+from imitation.algorithms import bc
 from Wordle import WordleEnv
 from itertools import count
 import pandas as pd
-import stable_baselines3.ppo
+import stable_baselines3
+#make sure to run file in dedicated terminal ffs SDFJSDJFSLKDJF
 
 gym.register(
     id='WordleGame-v0',
