@@ -1,16 +1,49 @@
-import gym
+import gymnasium as gym
 from imitation.algorithms import bc
 from Wordle import WordleEnv
 from itertools import count
 import pandas as pd
-import stable_baselines3
 #make sure to run file in dedicated terminal ffs SDFJSDJFSLKDJF
+
+from stable_baselines3 import DQN, A2C, PPO
+from stable_baselines3.a2c import MlpPolicy
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.env_checker import check_env
+from gymnasium.wrappers import TimeLimit
+from imitation.data import rollout
+from imitation.data.wrappers import RolloutInfoWrapper
+from stable_baselines3.common.vec_env import DummyVecEnv
+import numpy as np
 
 gym.register(
     id='WordleGame-v0',
     entry_point='Wordle:WordleEnv',
+    max_episode_steps=7
 )
 
+env = gym.make('WordleGame-v0')
+#check_env(env)
+
+venv = make_vec_env(
+    "WordleGame-v0",
+    rng=np.random.default_rng(),
+    n_envs=4,
+    post_wrappers=[lambda env, _: RolloutInfoWrapper(env)],
+)
+
+model = A2C(MlpPolicy, env, verbose=1)
+model.learn(6)
+model.save("a2c_wordle")
+
+obs = env.reset()
+print(model.predict(obs))
+action = model.predict(obs)
+env.render()
+
+    
+
+
+"""
 size = None
 env = gym.make("WordleGame-v0", subset_size=size) 
 obs = env.reset()
@@ -52,3 +85,4 @@ for episode in range(num_episodes):
     
 print('Complete')
 
+"""

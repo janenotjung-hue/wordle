@@ -1,11 +1,17 @@
 import random
 import numpy as np
-import gym
-from gym import spaces
+import gymnasium as gym
+from gymnasium.spaces import Discrete, Tuple, MultiDiscrete, Box
+from typing import Optional
+#TODO CHANGE SPACES.DISCRETE TO DISCRETE
 
 class WordleEnv(gym.Env):
+    
+    metadata = {
+        "render_modes": ["human", ],
+    }
+
     def __init__(self, word_length=5, max_attempts=6, subset_size=None):
-        metadata = {'render.modes': ['human']}
         self.word_length = word_length
         self.max_attempts = max_attempts
         self.target_word = ''
@@ -23,13 +29,12 @@ class WordleEnv(gym.Env):
 
         # State space has 78 dimensions (3 for each letter, gray, yellow, and green states)
         self.state_size = 78
-        self.observation_space = spaces.Discrete(self.state_size)
+        self.observation_space = MultiDiscrete([3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3])
         # Possible actions are the number of words in the dataset
         self.action_size = len(self.words)
-        self.action_space = spaces.Discrete(self.action_size)
+        self.action_space = Discrete(self.action_size)
         # Current state starts as all zeros one hot encoded matrix, then it will be built after each move
-        self.current_state = np.zeros(self.state_size, dtype=np.float32)
-        
+        self.state = np.zeros(self.state_size, dtype=np.int32)
         
     # This function removes incompatible words based on current guesses.
     def remove_incompatible_words(self, current_guess):
@@ -65,15 +70,16 @@ class WordleEnv(gym.Env):
         return random.randint(0, self.action_size - 1)
 
     # Before starting each episode, the environment is resetted to give the initial conditions.
-    def reset(self):
+    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+        super().reset(seed=seed)
         self.target_word = random.choice(self.words)
         self.attempts_left = self.max_attempts
         self.attempts = 0
         self.current_guess = '_' * self.word_length
         self.available_actions = list(range(self.action_size))
-        self.current_state = np.zeros(self.state_size, dtype=np.float32)
+        self.state = np.zeros(self.state_size, dtype=np.int32)
         
-        return self.current_state
+        return self.get_observation(), {}
 
     # Each time we make an action (make a guess), we check how many of the letters are correct.
     def step(self, action):
@@ -98,12 +104,12 @@ class WordleEnv(gym.Env):
                 done = True
                 
         self.remove_incompatible_words(self.current_guess)
-
-        return self.get_state(), reward, done, {}
+        observation = self.get_observation()
+        return observation, reward, done, done, {}
     
     # In each turn, get the new state based on the correctness of the letters
     def get_state(self):
-        state = self.current_state
+        state = self.state
         # Check each letter of the guess
         for idx, letter in enumerate(self.current_guess):
             # If correct location and letter (green), that is allocated for 0,25
@@ -117,6 +123,25 @@ class WordleEnv(gym.Env):
                 state[(ord(letter) - 65) + 26*2] = 1
         return state
 
+    def get_observation(self):
+        state = self.state
+        state = np.zeros(26, dtype=np.int32)
+        # Check each letter of the guess
+        print(self.current_guess)
+        for idx, letter in enumerate(self.current_guess):
+            if letter == '_':
+                break
+            # If correct location and letter (green), that is allocated for 0,25
+            if letter == self.target_word[idx]:
+                state[(ord(letter) - 65)] = 2
+            # If only correct letter (yellow), allocated for second 26 indices.
+            elif letter in self.target_word:
+                state[(ord(letter) - 65)] = 1
+            # If the letter is not in the word, allocated for the last 26 indices.
+            else:
+                state[(ord(letter) - 65)] = 0
+        return state
+        
     # Printing output purposes.
     def render(self):
         print(f"Current guess: {self.current_guess}")
