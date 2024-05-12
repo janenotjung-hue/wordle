@@ -53,7 +53,7 @@ Note that the rollout function requires a vectorized environment and needs the R
 reward, _ = evaluate_policy(expert, env, 10)
 print(f"Reward before training: {reward}")
     
-expert.learn(100000)  # Note: set to 100000 to train a proficient expert
+expert.learn(100)  # Note: set to 100000 to train a proficient expert
 
 expert.save('ppo_expert.zip')
 reward, _ = evaluate_policy(expert, expert.get_env(), 10)

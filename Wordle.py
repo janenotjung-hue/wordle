@@ -77,6 +77,7 @@ class WordleEnv(gym.Env):
         self.attempts = 0
         self.current_guess = '_' * self.word_length
         self.available_actions = list(range(self.action_size))
+        #print(len(self.available_actions))
         self.state = np.zeros(self.state_size, dtype=np.int32)
         
         return self.get_observation(), {}
@@ -125,6 +126,7 @@ class WordleEnv(gym.Env):
 
     def get_observation(self):
         state = self.state
+        #TODO: CHANGE THIS TO SOMETHING ELSE
         state = np.zeros(26, dtype=np.int32)
         # Check each letter of the guess
         print(self.current_guess)
