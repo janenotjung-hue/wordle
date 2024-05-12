@@ -32,7 +32,6 @@ venv = make_vec_env(
 )
 
 from stable_baselines3.common.evaluation import evaluate_policy
-from gymnasium.wrappers import TimeLimit
 
 expert = PPO(
     policy=MlpPolicy,
@@ -45,53 +44,17 @@ expert = PPO(
     n_steps=64,
 )
 
+#have a look at the section about transitions
+"""
+https://imitation.readthedocs.io/en/latest/tutorials/1_train_bc.html
+Note that the rollout function requires a vectorized environment and needs the RolloutInfoWrapper around each of the environments. This is why we passed the post_wrappers argument to make_vec_env above.
+"""
+
 reward, _ = evaluate_policy(expert, env, 10)
 print(f"Reward before training: {reward}")
     
-expert.learn(100)  # Note: set to 100000 to train a proficient expert
+expert.learn(100000)  # Note: set to 100000 to train a proficient expert
+
+expert.save('ppo_expert.zip')
 reward, _ = evaluate_policy(expert, expert.get_env(), 10)
 print(f"Expert reward: {reward}")
-
-"""
-size = None
-env = gym.make("WordleGame-v0", subset_size=size) 
-obs = env.reset()
-env.render()
-
-num_episodes = 10
-average_reward = 0
-
-with open('data/wordle_actual.txt', 'r') as f:
-    words = [word.strip().upper() for word in f.readlines() if len(word.strip()) == 5]
-
-df = pd.read_csv('dataset/normal.csv')
-guesses = df.drop(columns=["hits_0","hits_1","hits_2","hits_3","hits_4"], axis=1)
-guesses = guesses.replace("     ", None)
-values = []
-for index, row in df.iterrows():
-    for i in range(0, len(row)):
-        if i < len(row) and row.iloc[i] == 'GGGGG':
-            values.append(row.iloc[i-1])
-
-for episode in range(num_episodes):
-    state = env.reset()
-    row = guesses.iloc[episode]
-    env.target_word = values[episode]
-    for index, value in row.items():
-        if value is not None:
-            action = words.index(value.upper())
-            observation, reward, done, _ = env.step(action)
-            env.render()
-            if done:
-                next_state = None
-            else:
-                next_state = observation
-            if done:
-                break
-            action = value
-            state = next_state
-        
-    
-print('Complete')
-
-"""
