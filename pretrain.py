@@ -7,7 +7,7 @@ import pandas as pd
 
 from stable_baselines3 import DQN, A2C, PPO
 from stable_baselines3.a2c import MlpPolicy
-from stable_baselines3.common.env_util import make_vec_env
+from imitation.util.util import make_vec_env
 from stable_baselines3.common.env_checker import check_env
 from gymnasium.wrappers import TimeLimit
 from imitation.data import rollout
@@ -31,17 +31,26 @@ venv = make_vec_env(
     post_wrappers=[lambda env, _: RolloutInfoWrapper(env)],
 )
 
-model = A2C(MlpPolicy, env, verbose=1)
-model.learn(6)
-model.save("a2c_wordle")
+from stable_baselines3.common.evaluation import evaluate_policy
+from gymnasium.wrappers import TimeLimit
 
-obs = env.reset()
-print(model.predict(obs))
-action = model.predict(obs)
-env.render()
+expert = PPO(
+    policy=MlpPolicy,
+    env=env,
+    seed=0,
+    batch_size=64,
+    ent_coef=0.0,
+    learning_rate=0.0003,
+    n_epochs=10,
+    n_steps=64,
+)
 
+reward, _ = evaluate_policy(expert, env, 10)
+print(f"Reward before training: {reward}")
     
-
+expert.learn(100)  # Note: set to 100000 to train a proficient expert
+reward, _ = evaluate_policy(expert, expert.get_env(), 10)
+print(f"Expert reward: {reward}")
 
 """
 size = None
