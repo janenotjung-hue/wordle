@@ -79,7 +79,7 @@ class WordleEnv(gym.Env):
         self.available_actions = list(range(self.action_size))
         #print(len(self.available_actions))
         self.state = np.zeros(self.state_size, dtype=np.int32)
-        
+        #TODO: check if it should return self.state
         return self.get_observation(), {}
 
     # Each time we make an action (make a guess), we check how many of the letters are correct.
@@ -103,7 +103,9 @@ class WordleEnv(gym.Env):
             if self.attempts_left <= 0:
                 reward = -10
                 done = True
-                
+        
+        
+        print(f"target_word: {self.target_word}, guess: {self.current_guess}, reward={reward}")
         self.remove_incompatible_words(self.current_guess)
         observation = self.get_observation()
         return observation, reward, done, done, {}
@@ -126,23 +128,22 @@ class WordleEnv(gym.Env):
 
     def get_observation(self):
         state = self.state
-        #TODO: CHANGE THIS TO SOMETHING ELSE
-        state = np.zeros(26, dtype=np.int32)
+        split_arrays = np.split(state, 3)
+        sum_array = np.sum(split_arrays, axis=0)
         # Check each letter of the guess
-        print(self.current_guess)
         for idx, letter in enumerate(self.current_guess):
             if letter == '_':
                 break
             # If correct location and letter (green), that is allocated for 0,25
             if letter == self.target_word[idx]:
-                state[(ord(letter) - 65)] = 2
+                sum_array[(ord(letter) - 65)] = 2
             # If only correct letter (yellow), allocated for second 26 indices.
             elif letter in self.target_word:
-                state[(ord(letter) - 65)] = 1
+                sum_array[(ord(letter) - 65)] = 1
             # If the letter is not in the word, allocated for the last 26 indices.
             else:
-                state[(ord(letter) - 65)] = 0
-        return state
+                sum_array[(ord(letter) - 65)] = 0
+        return sum_array
         
     # Printing output purposes.
     def render(self):
