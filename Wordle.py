@@ -27,7 +27,7 @@ class WordleEnv(gym.Env):
                 words = self.get_random_subset(words, subset_size)
             self.words = words
 
-        with open('data/valid_guesses.csv', 'r') as f:
+        with open('data/all_words.csv', 'r') as f:
         #with open('data/wordle_subset.txt', 'r') as f:
             guessable_words = [word.strip().upper() for word in f.readlines() if len(word.strip()) == word_length]
             self.guessable_words = guessable_words
@@ -78,7 +78,6 @@ class WordleEnv(gym.Env):
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
         self.target_word = random.choice(self.words)
-        print(type(self.target_word))
         self.attempts_left = self.max_attempts
         self.attempts = 0
         self.current_guess = '_' * self.word_length

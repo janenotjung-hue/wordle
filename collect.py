@@ -10,8 +10,7 @@ from imitation.util import util
 from typing import Mapping, Sequence, cast
 from imitation.data.types import TrajectoryWithRew
 
-num_episodes = 3
-with open('data/valid_guesses.csv', 'r') as f:
+with open('data/all_words.csv', 'r') as f:
     words = [word.strip().upper() for word in f.readlines() if len(word.strip()) == 5]
 
 df = pd.read_csv('dataset/normal.csv')
@@ -23,9 +22,10 @@ for index, row in df.iterrows():
         if i < len(row) and row.iloc[i] == 'GGGGG':
             answers.append(row.iloc[i-1])
 
-states = []
-actions = []
-rewards = []
+num_episodes = len(guesses)
+obs = []
+acts = []
+rews = []
 trajs = []
 
 gym.register(
@@ -40,8 +40,7 @@ env = WordleEnv()
 for episode in range(num_episodes):
     print(episode)
     state = env.reset()
-    print(state[0])
-    states.append(np.array(state[0]))
+    obs.append(np.array(state[0]))
     env.target_word = answers[episode].upper()
     row = guesses.iloc[episode]
     env.render()
@@ -49,9 +48,9 @@ for episode in range(num_episodes):
         if value is not None:
             action = words.index(value.upper())
             observation, reward, done, done, _ = env.step(action)
-            states.append(np.array(observation))
-            actions.append(action)
-            rewards.append(reward)
+            obs.append(np.array(observation))
+            acts.append(action)
+            rews.append(reward)
             env.render()
             if done:
                 next_state = None
@@ -61,14 +60,16 @@ for episode in range(num_episodes):
                 break
             
             state = next_state
-    print(states)
-    print(np.asarray(actions, dtype=np.int64))
-    print(rewards)
-    trajs.append(TrajectoryWithRew(obs=states, acts=np.array(actions), infos=None, terminal=True, rews=np.array(rewards)))
+    trajs.append(TrajectoryWithRew(obs=obs, acts=np.array(acts), infos=None, terminal=True, rews=np.array(rews)))
+    obs=[]
+    acts=[]
+    rews=[]
+
+
     """
         TrajectoryWithRew(obs=array([[1],[2],[3],[4],[5],[6],[7]]), acts=array([10087,  5193,  8488,  4657,  9781,  5790], dtype=int64), infos=None, terminal=True, rews=array([  0.,   0.,   1.,   0.,   0., -10.]))]
     """
-np.save('data/trajectories', trajs, allow_pickle=True)
+np.save('data/trajectories_all', trajs, allow_pickle=True)
 print('Complete')
 
 
