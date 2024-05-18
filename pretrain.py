@@ -49,11 +49,27 @@ https://imitation.readthedocs.io/en/latest/tutorials/1_train_bc.html
 Note that the rollout function requires a vectorized environment and needs the RolloutInfoWrapper around each of the environments. This is why we passed the post_wrappers argument to make_vec_env above.
 """
 
-reward, _ = evaluate_policy(expert, venv, 10)
-print(f"Reward before training: {reward}")
-    
-expert.learn(100000, progress_bar=True)  # Note: set to 300000 to train a proficient expert
 
-expert.save('ppo_expert_100k.zip')
-reward, _ = evaluate_policy(expert, venv, 10)
-print(f"Expert reward: {reward}")
+#expert.save('ppo_expert_100k.zip')
+#reward, _ = evaluate_policy(expert, venv, 10)
+#print(f"Expert reward: {reward}")
+expert.learn(10)
+expert.save('ppo_expert_10.zip')
+
+from imitation.policies.serialize import load_policy
+
+exp = load_policy('ppo', venv=venv, path='ppo_expert_10.zip')
+
+rollouts = rollout.rollout(
+    exp,
+    venv,
+    rollout.make_sample_until(min_timesteps=None, min_episodes=10),
+    rng=np.random.default_rng(None),
+)
+
+from stable_baselines3.common import monitor, policies
+from imitation.data.types import AnyPath
+from imitation.util.util import save_policy
+
+print(rollouts)
+save_policy(exp, "policy.csv")

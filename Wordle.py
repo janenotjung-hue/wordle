@@ -34,7 +34,7 @@ class WordleEnv(gym.Env):
 
         # State space has 78 dimensions (3 for each letter, gray, yellow, and green states)
         self.state_size = 78
-        self.observation_space = MultiDiscrete([3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3])
+        self.observation_space = MultiDiscrete([2]*78)
         # Possible actions are the number of words in the dataset
         self.action_size = len(self.guessable_words)
         self.action_space = Discrete(self.action_size)
@@ -85,7 +85,7 @@ class WordleEnv(gym.Env):
         #print(len(self.available_actions))
         self.state = np.zeros(self.state_size, dtype=np.int32)
         #TODO: check if it should return self.state
-        return self.get_observation(), {}
+        return self.get_state(), {}
 
     # Each time we make an action (make a guess), we check how many of the letters are correct.
     def step(self, action):
@@ -101,7 +101,7 @@ class WordleEnv(gym.Env):
         # If some of the letters are correct, give intermediate reward for the number of correct letters [1,4]
         else:
             correct_letters = sum([1 for guessed_letter, target_letter in zip(self.current_guess, self.target_word) if guessed_letter == target_letter])
-            reward = 1 * correct_letters
+            reward = 1.0 * correct_letters
             
             self.attempts_left -= 1
             # If there is no attempts left, unsuccessful, -10 reward.
@@ -112,7 +112,7 @@ class WordleEnv(gym.Env):
         
         print(f"target_word: {self.target_word}, guess: {self.current_guess}, reward={reward}")
         self.remove_incompatible_words(self.current_guess)
-        observation = self.get_observation()
+        observation = self.get_state()
         return observation, reward, done, done, {}
     
     # In each turn, get the new state based on the correctness of the letters
@@ -120,6 +120,8 @@ class WordleEnv(gym.Env):
         state = self.state
         # Check each letter of the guess
         for idx, letter in enumerate(self.current_guess):
+            if letter == '_':
+                break
             # If correct location and letter (green), that is allocated for 0,25
             if letter == self.target_word[idx]:
                 state[(ord(letter) - 65)] = 1
