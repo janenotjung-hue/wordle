@@ -60,7 +60,7 @@ for episode in range(num_episodes):
                 break
             
             state = next_state
-    trajs.append(TrajectoryWithRew(obs=obs, acts=np.array(acts), infos=None, terminal=True, rews=np.array(rews)))
+    trajs.append(TrajectoryWithRew(obs=np.array(obs), acts=np.array(acts), infos=None, terminal=True, rews=np.array(rews)))
     obs=[]
     acts=[]
     rews=[]
