@@ -20,18 +20,23 @@ class WordleEnv(gym.Env):
         self.current_guess = ''
 
         # Opening the txt file containing possible words and get a random subset of them if necessary
-        with open('data/wordle_actual.txt', 'r') as f:
+        with open('data/valid_solutions.csv', 'r') as f:
         #with open('data/wordle_subset.txt', 'r') as f:
             words = [word.strip().upper() for word in f.readlines() if len(word.strip()) == word_length]
             if subset_size is not None:
                 words = self.get_random_subset(words, subset_size)
             self.words = words
 
+        with open('data/valid_guesses.csv', 'r') as f:
+        #with open('data/wordle_subset.txt', 'r') as f:
+            guessable_words = [word.strip().upper() for word in f.readlines() if len(word.strip()) == word_length]
+            self.guessable_words = guessable_words
+
         # State space has 78 dimensions (3 for each letter, gray, yellow, and green states)
         self.state_size = 78
         self.observation_space = MultiDiscrete([3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3])
         # Possible actions are the number of words in the dataset
-        self.action_size = len(self.words)
+        self.action_size = len(self.guessable_words)
         self.action_space = Discrete(self.action_size)
         # Current state starts as all zeros one hot encoded matrix, then it will be built after each move
         self.state = np.zeros(self.state_size, dtype=np.int32)
@@ -40,7 +45,7 @@ class WordleEnv(gym.Env):
     def remove_incompatible_words(self, current_guess):
         new_available_actions = []
         for i in self.available_actions:
-            word = self.words[i]
+            word = self.guessable_words[i]
             compatible = True
             for idx, (guess_char, target_char) in enumerate(zip(current_guess, self.target_word)):
                 if guess_char == target_char and word[idx] != guess_char:
@@ -84,7 +89,7 @@ class WordleEnv(gym.Env):
 
     # Each time we make an action (make a guess), we check how many of the letters are correct.
     def step(self, action):
-        self.current_guess = self.words[action]
+        self.current_guess = self.guessable_words[action]
         self.mask_action(action)  # Mask the taken action
         self.attempts += 1
         reward = 0
