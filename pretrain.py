@@ -54,6 +54,6 @@ print(f"Reward before training: {reward}")
     
 expert.learn(100000, progress_bar=True)  # Note: set to 300000 to train a proficient expert
 
-expert.save('ppo_expert_300k.zip')
+expert.save('ppo_expert_100k.zip')
 reward, _ = evaluate_policy(expert, venv, 10)
 print(f"Expert reward: {reward}")
