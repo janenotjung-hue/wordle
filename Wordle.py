@@ -78,6 +78,7 @@ class WordleEnv(gym.Env):
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
         self.target_word = random.choice(self.words)
+        print(type(self.target_word))
         self.attempts_left = self.max_attempts
         self.attempts = 0
         self.current_guess = '_' * self.word_length
@@ -86,6 +87,9 @@ class WordleEnv(gym.Env):
         self.state = np.zeros(self.state_size, dtype=np.int32)
         #TODO: check if it should return self.state
         return self.get_state(), {}
+
+    def set_target_word(self, seed):
+        self.target_word = self.words[seed]
 
     # Each time we make an action (make a guess), we check how many of the letters are correct.
     def step(self, action):
@@ -96,7 +100,7 @@ class WordleEnv(gym.Env):
         done = False
         # If the guess is correct, +10 reward.
         if self.current_guess == self.target_word:
-            reward = 10
+            reward = 10.0
             done = True
         # If some of the letters are correct, give intermediate reward for the number of correct letters [1,4]
         else:
@@ -106,11 +110,9 @@ class WordleEnv(gym.Env):
             self.attempts_left -= 1
             # If there is no attempts left, unsuccessful, -10 reward.
             if self.attempts_left <= 0:
-                reward = -10
+                reward = -10.0
                 done = True
         
-        
-        print(f"target_word: {self.target_word}, guess: {self.current_guess}, reward={reward}")
         self.remove_incompatible_words(self.current_guess)
         observation = self.get_state()
         return observation, reward, done, done, {}
