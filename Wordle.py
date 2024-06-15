@@ -3,6 +3,8 @@ import numpy as np
 import gymnasium as gym
 from gymnasium.spaces import Discrete, Tuple, MultiDiscrete, Box
 from typing import Optional
+from sty import fg, bg, ef, rs
+
 #TODO CHANGE SPACES.DISCRETE TO DISCRETE
 
 class WordleEnv(gym.Env):
@@ -98,8 +100,10 @@ class WordleEnv(gym.Env):
         done = False
         # If the guess is correct, +10 reward.
         if self.current_guess == self.target_word:
-            reward = 10.0
+            self.attempts_left -= 1
+            self.render()
             print('Word guessed correctly!')
+            reward = 10.0
             done = True
         # If some of the letters are correct, give intermediate reward for the number of correct letters [1,4]
         else:
@@ -109,8 +113,9 @@ class WordleEnv(gym.Env):
             self.attempts_left -= 1
             # If there is no attempts left, unsuccessful, -10 reward.
             if self.attempts_left <= 0:
-                reward = -10.0
+                self.render()
                 print('Word not guessed!')
+                reward = -10.0
                 done = True
         
         self.remove_incompatible_words(self.current_guess)
@@ -153,10 +158,23 @@ class WordleEnv(gym.Env):
             else:
                 sum_array[(ord(letter) - 65)] = 0
         return sum_array
-        
+    
+    def get_answer(self):
+        res = ''
+        for idx, letter in enumerate(self.current_guess):
+            if letter == '':
+                break
+            if letter == self.target_word[idx]:
+                res += bg.green + letter + bg.rs 
+            elif letter in self.target_word:
+                res += bg.yellow + letter + bg.rs
+            else:
+                res += bg.grey + letter + bg.rs
+        return res
+
     # Printing output purposes.
     def render(self):
         if self.attempts_left < 7:
             print(f"Target word: {self.target_word}")
             print(f"Attempts left: {self.attempts_left}")
-            print(f"Current guess: {self.current_guess}")
+            print(f"Current guess: {self.get_answer()}")
