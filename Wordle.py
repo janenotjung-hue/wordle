@@ -11,14 +11,13 @@ class WordleEnv(gym.Env):
         "render_modes": ["human", ],
     }
 
-    def __init__(self, word_length=5, max_attempts=6, subset_size=None):
+    def __init__(self, word_length=5, max_attempts=7, subset_size=None):
         self.word_length = word_length
         self.max_attempts = max_attempts
         self.target_word = ''
-        self.attempts_left = 0
+        self.attempts_left = max_attempts
         self.attempts = 0
         self.current_guess = ''
-
         # Opening the txt file containing possible words and get a random subset of them if necessary
         with open('data/valid_solutions.csv', 'r') as f:
         #with open('data/wordle_subset.txt', 'r') as f:
@@ -80,7 +79,7 @@ class WordleEnv(gym.Env):
         self.target_word = random.choice(self.words)
         self.attempts_left = self.max_attempts
         self.attempts = 0
-        self.current_guess = '_' * self.word_length
+        self.current_guess = ''
         self.available_actions = list(range(self.action_size))
         #print(len(self.available_actions))
         self.state = np.zeros(self.state_size, dtype=np.int32)
@@ -100,6 +99,7 @@ class WordleEnv(gym.Env):
         # If the guess is correct, +10 reward.
         if self.current_guess == self.target_word:
             reward = 10.0
+            print('Word guessed correctly!')
             done = True
         # If some of the letters are correct, give intermediate reward for the number of correct letters [1,4]
         else:
@@ -110,6 +110,7 @@ class WordleEnv(gym.Env):
             # If there is no attempts left, unsuccessful, -10 reward.
             if self.attempts_left <= 0:
                 reward = -10.0
+                print('Word not guessed!')
                 done = True
         
         self.remove_incompatible_words(self.current_guess)
@@ -121,7 +122,7 @@ class WordleEnv(gym.Env):
         state = self.state
         # Check each letter of the guess
         for idx, letter in enumerate(self.current_guess):
-            if letter == '_':
+            if letter == '':
                 break
             # If correct location and letter (green), that is allocated for 0,25
             if letter == self.target_word[idx]:
@@ -140,7 +141,7 @@ class WordleEnv(gym.Env):
         sum_array = np.sum(split_arrays, axis=0)
         # Check each letter of the guess
         for idx, letter in enumerate(self.current_guess):
-            if letter == '_':
+            if letter == '':
                 break
             # If correct location and letter (green), that is allocated for 0,25
             if letter == self.target_word[idx]:
@@ -155,6 +156,7 @@ class WordleEnv(gym.Env):
         
     # Printing output purposes.
     def render(self):
-        print(f"Current guess: {self.current_guess}")
-        print(f"Target word: {self.target_word}")
-        print(f"Attempts left: {self.attempts_left}")
+        if self.attempts_left < 7:
+            print(f"Target word: {self.target_word}")
+            print(f"Attempts left: {self.attempts_left}")
+            print(f"Current guess: {self.current_guess}")
