@@ -10,7 +10,7 @@ from sty import fg, bg, ef, rs
 class WordleEnv(gym.Env):
     
     metadata = {
-        "render_modes": ["human", ],
+        "render_modes": ["human"],
     }
 
     def __init__(self, word_length=5, max_attempts=7, subset_size=None):
