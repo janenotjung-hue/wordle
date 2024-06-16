@@ -1889,7 +1889,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_100.zip
 |    prob_true_act  | 0.97      |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:03, 62.00batch/s]
+246batch [00:03, 62.01batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -2174,7 +2174,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_100.zip
 |    prob_true_act  | 0.99      |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 59.00batch/s]
+246batch [00:04, 59.03batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -2670,7 +2670,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_150.zip
 |    prob_true_act  | 0.983     |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 61.00batch/s]
+246batch [00:04, 61.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -2730,7 +2730,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_150.zip
 |    prob_true_act  | 0.998     |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 60.00batch/s]
+246batch [00:04, 60.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -4277,7 +4277,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_250.zip
 |    prob_true_act  | 1         |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 56.00batch/s]
+246batch [00:04, 56.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -4968,7 +4968,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_300.zip
 |    prob_true_act  | 1        |
 |    samples_so_far | 32       |
 --------------------------------
-246batch [00:04, 56.00batch/s]
+246batch [00:04, 56.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -5223,7 +5223,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_300.zip
 |    prob_true_act  | 1        |
 |    samples_so_far | 32       |
 --------------------------------
-246batch [00:04, 56.00batch/s]
+246batch [00:04, 56.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -5359,7 +5359,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_350.zip
 |    prob_true_act  | 0.979     |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 56.00batch/s]
+246batch [00:04, 56.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -5989,7 +5989,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_350.zip
 |    prob_true_act  | 0.982     |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 56.00batch/s]
+246batch [00:04, 56.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -6816,7 +6816,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_450.zip
 |    prob_true_act  | 1         |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 56.00batch/s]
+246batch [00:04, 56.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -7837,7 +7837,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_500.zip
 |    prob_true_act  | 0.978     |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 55.00batch/s]
+246batch [00:04, 55.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -9069,7 +9069,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_600.zip
 |    prob_true_act  | 0.983     |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 55.00batch/s]
+246batch [00:04, 55.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -9835,7 +9835,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_650.zip
 |    prob_true_act  | 0.985     |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 54.00batch/s]
+246batch [00:04, 54.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -11141,7 +11141,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_700.zip
 |    prob_true_act  | 0.976     |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 54.00batch/s]
+246batch [00:04, 54.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -11502,7 +11502,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_750.zip
 |    prob_true_act  | 0.977     |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 55.00batch/s]
+246batch [00:04, 55.22batch/s]
 0batch [00:00, ?batch/s]--------------------------------
 | batch_size        | 32       |
 | bc/               |          |
@@ -13650,7 +13650,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_900.zip
 |    prob_true_act  | 1         |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 55.00batch/s]
+246batch [00:04, 55.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -13755,7 +13755,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_900.zip
 |    prob_true_act  | 1         |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 55.00batch/s]
+246batch [00:04, 55.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -13980,7 +13980,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_900.zip
 |    prob_true_act  | 0.965     |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 54.00batch/s]
+246batch [00:04, 54.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
@@ -14986,7 +14986,7 @@ Checkpoint saved at checkpoints\bc_model_epoch_950.zip
 |    prob_true_act  | 0.992     |
 |    samples_so_far | 32        |
 ---------------------------------
-246batch [00:04, 55.00batch/s]
+246batch [00:04, 55.22batch/s]
 0batch [00:00, ?batch/s]---------------------------------
 | batch_size        | 32        |
 | bc/               |           |
