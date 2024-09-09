@@ -22,14 +22,12 @@ class WordleEnv(gym.Env):
         self.current_guess = ''
         # Opening the txt file containing possible words and get a random subset of them if necessary
         with open('data/valid_solutions.csv', 'r') as f:
-        #with open('data/wordle_subset.txt', 'r') as f:
             words = [word.strip().upper() for word in f.readlines() if len(word.strip()) == word_length]
             if subset_size is not None:
                 words = self.get_random_subset(words, subset_size)
             self.words = words
 
         with open('data/all_words.csv', 'r') as f:
-        #with open('data/wordle_subset.txt', 'r') as f:
             guessable_words = [word.strip().upper() for word in f.readlines() if len(word.strip()) == word_length]
             self.guessable_words = guessable_words
 

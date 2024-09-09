@@ -10,10 +10,10 @@ from imitation.util import util
 from typing import Mapping, Sequence, cast
 from imitation.data.types import TrajectoryWithRew
 
-with open('data/all_words.csv', 'r') as f:
+with open('all_words.csv', 'r') as f:
     words = [word.strip().upper() for word in f.readlines() if len(word.strip()) == 5]
 
-df = pd.read_csv('dataset/normal.csv')
+df = pd.read_csv('game_history/normal.csv')
 guesses = df.drop(columns=["hits_0","hits_1","hits_2","hits_3","hits_4"], axis=1)
 guesses = guesses.replace("     ", None)
 answers = []
@@ -69,7 +69,7 @@ for episode in range(num_episodes):
     """
         TrajectoryWithRew(obs=array([[1],[2],[3],[4],[5],[6],[7]]), acts=array([10087,  5193,  8488,  4657,  9781,  5790], dtype=int64), infos=None, terminal=True, rews=array([  0.,   0.,   1.,   0.,   0., -10.]))]
     """
-np.save('data/trajectories_all', trajs, allow_pickle=True)
+np.save('trajectories_all', trajs, allow_pickle=True)
 print('Complete')
 
 
