@@ -13,26 +13,29 @@ class WordleEnv(gym.Env):
         "render_modes": ["human"],
     }
 
-    def __init__(self, word_length=5, max_attempts=7, subset_size=None):
+    def __init__(self, word_length=5, max_attempts=6, player_type=0, answer=None, subset_size=None):
         self.word_length = word_length
         self.max_attempts = max_attempts
         self.target_word = ''
         self.attempts_left = max_attempts
         self.attempts = 0
         self.current_guess = ''
+        self.player_type = player_type
         # Opening the txt file containing possible words and get a random subset of them if necessary
         with open('data/valid_solutions.csv', 'r') as f:
-        #with open('data/wordle_subset.txt', 'r') as f:
             words = [word.strip().upper() for word in f.readlines() if len(word.strip()) == word_length]
             if subset_size is not None:
                 words = self.get_random_subset(words, subset_size)
             self.words = words
 
         with open('data/all_words.csv', 'r') as f:
-        #with open('data/wordle_subset.txt', 'r') as f:
             guessable_words = [word.strip().upper() for word in f.readlines() if len(word.strip()) == word_length]
             self.guessable_words = guessable_words
 
+        self.input = None
+        if(answer is not None):
+            self.input = self.words[answer]
+        
         # State space has 78 dimensions (3 for each letter, gray, yellow, and green states)
         self.state_size = 78
         self.observation_space = MultiDiscrete([2]*78)
@@ -41,7 +44,6 @@ class WordleEnv(gym.Env):
         self.action_space = Discrete(self.action_size)
         # Current state starts as all zeros one hot encoded matrix, then it will be built after each move
         self.state = np.zeros(self.state_size, dtype=np.int32)
-        
     # This function removes incompatible words based on current guesses.
     def remove_incompatible_words(self, current_guess):
         new_available_actions = []
@@ -86,10 +88,18 @@ class WordleEnv(gym.Env):
         #print(len(self.available_actions))
         self.state = np.zeros(self.state_size, dtype=np.int32)
         #TODO: check if it should return self.state
+        if(self.input is not None):
+            self.target_word = self.input
         return self.get_state(), {}
 
     def set_target_word(self, seed):
         self.target_word = self.words[seed]
+
+    def get_word_index(self, word:str):
+        if(self.words.count(word.upper())):
+            return self.words.index(word.upper())
+        else:
+            return -1
 
     # Each time we make an action (make a guess), we check how many of the letters are correct.
     def step(self, action):
@@ -114,7 +124,7 @@ class WordleEnv(gym.Env):
             # If there is no attempts left, unsuccessful, -10 reward.
             if self.attempts_left <= 0:
                 self.render()
-                print('Word not guessed!')
+                print('Word not guessed! Word was: ', self.target_word)
                 reward = -10.0
                 done = True
         
@@ -173,8 +183,16 @@ class WordleEnv(gym.Env):
         return res
 
     # Printing output purposes.
+    # def render(self):
+    #     if self.attempts_left < 7:
+    #         print(f"Target word: {self.target_word}")
+    #         print(f"Attempts left: {self.attempts_left}")
+    #         print(f"Current guess: {self.get_answer()}")
+
     def render(self):
-        if self.attempts_left < 7:
-            print(f"Target word: {self.target_word}")
-            print(f"Attempts left: {self.attempts_left}")
-            print(f"Current guess: {self.get_answer()}")
+        if self.attempts_left > 0 and self.attempts_left < 6:
+            if not self.get_answer() == self.target_word:
+                if self.player_type == 0:
+                    print(f"Target word: {self.target_word}")
+                print(f"Attempts left: {self.attempts_left}")
+                print(f"Current guess: {self.get_answer()}")

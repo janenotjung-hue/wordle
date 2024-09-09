@@ -18,8 +18,8 @@ def write_words_to_csv(words, filename):
             csvwriter.writerow([word])
 
 # Read words from the two files
-words1 = read_words_from_csv('data/valid_guesses.csv')
-words2 = read_words_from_csv('data/valid_solutions.csv')
+words1 = read_words_from_csv('valid_guesses.csv')
+words2 = read_words_from_csv('valid_solutions.csv')
 
 # Combine the lists of words
 combined_words = words1 + words2
@@ -31,4 +31,4 @@ combined_words = list(set(combined_words))
 combined_words.sort()
 
 # Write the sorted words to a new CSV file
-write_words_to_csv(combined_words, 'data/all_words.csv')
+write_words_to_csv(combined_words, 'all_words.csv')
