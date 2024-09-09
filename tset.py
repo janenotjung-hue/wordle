@@ -9,6 +9,8 @@ from Wordle import WordleEnv
 from stable_baselines3.common.policies import ActorCriticPolicy
 from stable_baselines3.common.evaluation import evaluate_policy
 from imitation.algorithms.bc import BC
+import gymnasium as gym
+from gymnasium.utils.play import play
 
 rng = np.random.default_rng()
 rollouts = np.load('data/trajectories_all.npy', allow_pickle=True)
@@ -29,9 +31,12 @@ bc_trainer = BC(
     policy=loaded_policy
 )
 
+#test model on 10 random games
 reward_after_training, episode_lengths = evaluate_policy(bc_trainer.policy, venv, n_eval_episodes=10, render=True, return_episode_rewards=True)
 print(f"Reward after training: {(reward_after_training)}")
 print(f"Average reward after training: {np.mean(reward_after_training)}")
 
 print(f"Episode lengths (number of steps): {episode_lengths}")
 print(f"Average number of steps per episode: {np.mean(episode_lengths)}")
+
+
