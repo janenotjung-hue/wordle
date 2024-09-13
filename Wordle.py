@@ -13,7 +13,7 @@ class WordleEnv(gym.Env):
         "render_modes": ["human"],
     }
 
-    def __init__(self, word_length=5, max_attempts=6, player_type=0, answer=None, subset_size=None):
+    def __init__(self, word_length=5, max_attempts=6, player_type=0, answer=None, subset_size=None, solver = 0):
         self.word_length = word_length
         self.max_attempts = max_attempts
         self.target_word = ''
@@ -21,6 +21,7 @@ class WordleEnv(gym.Env):
         self.attempts = 0
         self.current_guess = ''
         self.player_type = player_type
+        self.solver = solver
         # Opening the txt file containing possible words and get a random subset of them if necessary
         with open('data/valid_solutions.csv', 'r') as f:
             words = [word.strip().upper() for word in f.readlines() if len(word.strip()) == word_length]
@@ -108,30 +109,68 @@ class WordleEnv(gym.Env):
         self.attempts += 1
         reward = 0
         done = False
-        # If the guess is correct, +10 reward.
-        if self.current_guess == self.target_word:
-            self.attempts_left -= 1
-            self.render()
-            print('Word guessed correctly!')
-            reward = 10.0
-            done = True
-        # If some of the letters are correct, give intermediate reward for the number of correct letters [1,4]
-        else:
-            correct_letters = sum([1 for guessed_letter, target_letter in zip(self.current_guess, self.target_word) if guessed_letter == target_letter])
-            reward = 1.0 * correct_letters
-            
-            self.attempts_left -= 1
-            # If there is no attempts left, unsuccessful, -10 reward.
-            if self.attempts_left <= 0:
+        if self.solver == 0:
+            # If the guess is correct, +10 reward.
+            if self.current_guess == self.target_word:
+                self.attempts_left -= 1
                 self.render()
-                print('Word not guessed! Word was: ', self.target_word)
-                reward = -10.0
+                print('Word guessed correctly!')
+                reward = 10.0
                 done = True
+            # If some of the letters are correct, give intermediate reward for the number of correct letters [1,4]
+            else:
+                correct_letters = sum([1 for guessed_letter, target_letter in zip(self.current_guess, self.target_word) if guessed_letter == target_letter])
+                reward = 1.0 * correct_letters
+                
+                self.attempts_left -= 1
+                # If there is no attempts left, unsuccessful, -10 reward.
+                if self.attempts_left <= 0:
+                    self.render()
+                    print('Word not guessed! Word was: ', self.target_word)
+                    reward = -10.0
+                    done = True
+            
+            self.remove_incompatible_words(self.current_guess)
+            observation = self.get_state()
+            return observation, reward, done, done, {}
+        else:
+            print(self.current_guess)
+            print("Feedback 1 = correct letter, 2 = correct position")
+            print("Input format \"0 0 0 1 2\"")
+            arr = input("Enter feedback to model:")   
+            self.feedback = list(map(int,arr.split(' ')))
+            self.render()
+            observation = self.get_state_manual()
+            reward = 0
+            self.remove_incompatible_words(self.current_guess)
+            done = False
+            for i in self.feedback:
+                if i == 2:
+                    reward = reward + 1
+            #print(reward)
+            #print(observation)
+            if reward == 5:
+                print('Word guessed correctly!')
+                reward = 10.0
+                done = True
+            return observation, reward, done, done, {}
         
-        self.remove_incompatible_words(self.current_guess)
-        observation = self.get_state()
-        return observation, reward, done, done, {}
-    
+    def get_state_manual(self):
+        state = self.state
+        index = 0;
+        for i in self.feedback:
+            letter = self.current_guess[index]
+            #print (letter)
+            if (i == 0):
+                state[(ord(letter) - 65) + 26*2] = 1
+            elif (i == 1):
+                state[(ord(letter) - 65) + 26] = 1 #in word
+            else:
+                state[(ord(letter) - 65)] = 1 #correct location
+            index+=1
+        print(self.get_answer())
+        return state
+        
     # In each turn, get the new state based on the correctness of the letters
     def get_state(self):
         state = self.state
@@ -171,15 +210,30 @@ class WordleEnv(gym.Env):
     
     def get_answer(self):
         res = ''
-        for idx, letter in enumerate(self.current_guess):
-            if letter == '':
-                break
-            if letter == self.target_word[idx]:
-                res += bg.green + letter + bg.rs 
-            elif letter in self.target_word:
-                res += bg.yellow + letter + bg.rs
-            else:
-                res += bg.grey + letter + bg.rs
+        if self.solver == 0:
+            for idx, letter in enumerate(self.current_guess):
+                if letter == '':
+                    break
+                if letter == self.target_word[idx]:
+                    res += bg.green + letter + bg.rs 
+                elif letter in self.target_word:
+                    res += bg.yellow + letter + bg.rs
+                else:
+                    res += bg.grey + letter + bg.rs
+        else:
+            index = 0;
+            print(self.feedback)
+            for i in self.feedback:
+                letter = self.current_guess[index]
+                if letter == '':
+                    break
+                if i == 2:
+                    res += bg.green + letter + bg.rs 
+                elif i == 1:
+                    res += bg.yellow + letter + bg.rs
+                else:
+                    res += bg.grey + letter + bg.rs
+                index += 1
         return res
 
     # Printing output purposes.
